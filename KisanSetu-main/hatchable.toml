@@ -1,0 +1,24 @@
+[auth]
+enabled = true
+providers = ["email"]
+
+[[config]]
+name = "ai_service_url"
+default = ""
+description = "Optional external wait-time API base URL; KisanSetu calls /predict-wait."
+
+[db.tables.farmer_profiles]
+read = "own"
+write = "own"
+
+[db.tables.farmer_produce]
+read = "own"
+write = "own"
+
+[db.tables.bookings]
+read = "public"
+write = "own"
+
+[db.tables.notifications]
+read = "own"
+write = "own"

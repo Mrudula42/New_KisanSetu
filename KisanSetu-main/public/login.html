@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#173e2b">
+<title>Sign in — KisanSetu</title>
+<link rel="stylesheet" href="/theme.css">
+<script src="/api-config.js"></script>
+<style>
+.login-page{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;background:var(--cream)}.login-story{background:var(--forest);color:white;padding:60px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}.login-story:after{content:"";position:absolute;right:-170px;bottom:-220px;width:520px;height:520px;border:1px solid rgba(217,238,157,.3);border-radius:50%;box-shadow:0 0 0 45px rgba(217,238,157,.04),0 0 0 95px rgba(217,238,157,.04)}.login-story h1{font-size:clamp(36px,4vw,56px);max-width:520px;margin:18px 0}.login-story h1 em{font-style:normal;color:var(--lime)}.login-story p{color:#c4d7c9;max-width:460px;line-height:1.8}.login-main{display:grid;place-items:center;padding:28px}.login-card{width:min(100%,450px);background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:34px;box-shadow:var(--shadow)}.login-card h2{font-size:26px;margin:20px 0 8px}.login-card p{color:var(--muted);font-size:13px;line-height:1.7}.login-card .field{margin:18px 0}.login-card .btn{width:100%;min-height:46px}.login-message{display:none;margin-top:16px;border-radius:10px;background:#edf4e6;color:var(--forest);padding:12px;font-size:12px}.login-message.error{background:#fae8e4;color:#9e352a}.muted-link{display:block;color:var(--leaf);font-size:12px;text-align:center;margin-top:15px;font-weight:700}.login-quote{position:relative;z-index:1;font-size:12px;color:#a9c4ad}.login-wordmark{display:flex;align-items:center;gap:12px;font-family:Manrope,sans-serif;font-weight:800;font-size:20px}.login-wordmark small{display:block;font:600 10px 'DM Sans',sans-serif;color:#bbd0bf;letter-spacing:.12em}.login-card .hint{font-size:11px;margin-top:10px}.login-card .btn-soft{margin-top:10px}@media(max-width:760px){.login-page{display:block}.login-story{padding:24px 23px 28px;min-height:230px}.login-story h1{font-size:32px;margin:16px 0 10px}.login-story p{font-size:12px;margin-bottom:0}.login-quote{display:none}.login-main{padding:24px 14px}.login-card{padding:24px;border-radius:19px}}
+</style>
+</head>
+<body>
+<div class="login-page">
+<section class="login-story">
+<div class="login-wordmark"><span class="brand-mark">K</span><div>KisanSetu<small>SMART PROCUREMENT</small></div></div>
+<div style="position:relative;z-index:1"><div class="eyebrow" style="color:var(--lime)">BUILT AROUND THE FARMER</div><h1>Your crop deserves a <em>better queue.</em></h1><p>Sign in to book a procurement slot, receive your digital token, follow the queue and keep track of quality and payment updates.</p></div>
+<div class="login-quote">From field to market, with more clarity.</div>
+</section>
+<section class="login-main">
+<div class="login-card">
+<div class="brand"><span class="brand-mark">K</span><div>KisanSetu<small>FARMER ACCOUNT</small></div></div>
+<h2 id="login-title">Welcome back</h2><p id="login-copy">Sign in to access your farmer account, bookings and digital tokens.</p>
+<form id="auth-form">
+<div class="field" id="name-field" style="display:none"><label for="full-name">Full name</label><input id="full-name" type="text" autocomplete="name" maxlength="100" placeholder="Your name"></div>
+<div class="field"><label for="email">Email address</label><input id="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com"></div>
+<div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" minlength="12" maxlength="72" required placeholder="At least 12 characters"></div>
+<button class="btn btn-primary" type="submit" id="submit-auth">Sign in ↗</button>
+</form>
+<button class="muted-link" id="toggle-mode" type="button" style="background:none;border:0;cursor:pointer">New to KisanSetu? Create a farmer account</button>
+<div id="login-message" class="login-message"></div>
+<a class="muted-link" href="/">← Back to KisanSetu home</a>
+<p class="hint">Use a unique password with at least 12 characters. Local accounts are stored on this computer.</p>
+</div>
+</section>
+</div>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const apiUrl=path=>window.kisanSetuApiUrl(path);
+const next=new URLSearchParams(location.search).get('next');
+const requestedRedirect=next&&next.startsWith('/')&&!next.startsWith('//')?next:'/';
+const adminFlow=requestedRedirect==='/admin';
+const redirect=adminFlow?'/admin':requestedRedirect;
+let registerMode=false;
+function message(text,error){const el=$('login-message');el.textContent=text;el.style.display='block';el.className='login-message'+(error?' error':'');}
+function updateMode(){ $('name-field').style.display=registerMode?'block':'none';$('full-name').required=registerMode;$('password').setAttribute('autocomplete',registerMode?'new-password':'current-password');$('login-title').textContent=registerMode?'Create your farmer account':'Welcome back';$('login-copy').textContent=registerMode?'Create a local account to manage produce and procurement bookings.':'Sign in to access your farmer account, bookings and digital tokens.';$('submit-auth').textContent=registerMode?'Create account':'Sign in ↗';$('toggle-mode').textContent=registerMode?'Already have an account? Sign in':'New to KisanSetu? Create a farmer account';$('login-message').style.display='none';}
+if(adminFlow){document.title='Admin sign in — KisanSetu';document.querySelector('.login-card .brand small').textContent='ADMINISTRATOR ACCESS';$('login-title').textContent='Administrator sign in';$('login-copy').textContent='Sign in with an authorized administrator account to open the operations console.';$('toggle-mode').style.display='none';}
+else updateMode();
+$('toggle-mode').addEventListener('click',()=>{registerMode=!registerMode;updateMode();});
+$('auth-form').addEventListener('submit',async e=>{e.preventDefault();const button=$('submit-auth');button.disabled=true;const payload={email:$('email').value.trim(),password:$('password').value};if(registerMode)payload.full_name=$('full-name').value.trim();try{const response=await fetch(apiUrl('/api/auth/'+(registerMode?'register':'login')),{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||'Authentication failed. Please try again.');if(adminFlow&&result.user?.role!=='ADMIN'){await fetch(apiUrl('/api/auth/logout'),{method:'POST',credentials:'include'});throw new Error('This account does not have administrator access. Sign in with an ADMIN account.');}message(registerMode?'Account created. Opening KisanSetu…':'Signed in. Opening KisanSetu…');location.assign(redirect);}catch(error){message(error.message||'Authentication failed. Please try again.',true);}finally{button.disabled=false;}});
+fetch(apiUrl('/api/auth/me'),{credentials:'include'}).then(r=>r.ok?r.json():null).then(session=>{if(!session||!session.user)return;if(!adminFlow){location.assign(redirect);return;}if(session.user.role==='ADMIN'){location.assign(redirect);return;}message('This signed-in account is a farmer, not an administrator. Sign in below with an ADMIN account.',true);}).catch(()=>{});
+})();
+</script>
+</body>
+</html>
